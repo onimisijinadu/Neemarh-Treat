@@ -1,15 +1,33 @@
-import { Menu, ShoppingCartIcon, Sparkles, X } from "lucide-react";
-import { Link, useLocation, useNavigate } from "react-router";
+import {
+  Menu,
+  ShoppingCartIcon,
+  Sparkles,
+  User,
+  X,
+} from 'lucide-react';
+import {
+  Link,
+  useLocation,
+  useNavigate,
+} from 'react-router';
 
-import { Overlay } from "../component/overly";
-import { useCart } from "../context/usecontext";
-import { MenuLinks } from "../data/data";
+import { Overlay } from '../component/overly';
+import {
+  useAuth,
+  useCart,
+} from '../context/usecontext';
+import {
+  MenuLinks,
+  UserNav,
+} from '../data/data';
 
 export const NavBar = ({ isOpen, toogleBtn }) => {
   const location = useLocation();
   const navigate = useNavigate();
 
   const { cartCount } = useCart();
+
+  const { user, logOut } = useAuth();
 
   return (
     <>
@@ -60,6 +78,16 @@ export const NavBar = ({ isOpen, toogleBtn }) => {
               </span>
             )}
           </div>
+
+          {user && (
+            <div
+              onClick={() => navigate("/userDashboard")}
+              className={`hidden lg:block border border-orange-400/60 rounded-full p-1`}
+            >
+              <User className="w-7 h-7 font-bold text-orange-500/70" />
+            </div>
+          )}
+
           <div className="flex flex-col justify-center items-center lg:hidden ">
             <div onClick={toogleBtn} className="relative">
               <Menu
@@ -76,16 +104,40 @@ export const NavBar = ({ isOpen, toogleBtn }) => {
                 isOpen ? "translate-x-0" : "translate-x-full"
               }`}
             >
-              {MenuLinks.map((link) => (
-                <Link
-                  key={link.name}
-                  to={link.path}
-                  onClick={toogleBtn} // Close menu when a link is clicked
-                  className="w-full hover:bg-orange-500/10 hover:text-orange-500 font-semibold rounded-lg p-3 border-b border-gray-100 last:border-0"
-                >
-                  {link.name}
-                </Link>
-              ))}
+              {user ? (
+                <>
+                  {UserNav.map((link) => (
+                    <Link
+                      key={link.name}
+                      to={link.path}
+                      onClick={toogleBtn} // Close menu when a link is clicked
+                      className="w-full hover:bg-orange-500/10 hover:text-orange-500 font-semibold rounded-lg p-3 border-b border-gray-100 last:border-0"
+                    >
+                      {link.name}
+                    </Link>
+                  ))}
+                  <button
+                    onClick={() => {
+                      logOut(); // Your global context logout function
+                      toogleBtn(); // Close mobile menu if open
+                    }}
+                    className="w-full text-left text-red-500 hover:bg-red-500/10 ..."
+                  >
+                    Logout
+                  </button>
+                </>
+              ) : (
+                MenuLinks.map((link) => (
+                  <Link
+                    key={link.name}
+                    to={link.path}
+                    onClick={toogleBtn} // Close menu when a link is clicked
+                    className="w-full hover:bg-orange-500/10 hover:text-orange-500 font-semibold rounded-lg p-3 border-b border-gray-100 last:border-0"
+                  >
+                    {link.name}
+                  </Link>
+                ))
+              )}
             </div>
           </div>
         </div>

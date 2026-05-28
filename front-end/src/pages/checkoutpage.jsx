@@ -15,10 +15,15 @@ import {
   FormInput,
   MessageArea,
 } from '../component/form';
-import { useCart } from '../context/usecontext';
+import {
+  useAuth,
+  useCart,
+} from '../context/usecontext';
 
 export const CheckOut = () => {
   const { cart, addDeliveryDetails, clearCart } = useCart();
+
+  const { user } = useAuth();
 
   const navigate = useNavigate();
 

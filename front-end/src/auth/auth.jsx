@@ -63,7 +63,7 @@ export const LoginModal = () => {
               }}
               // login_uri={}
               useOneTap
-              text={`${screenRendering ? "Sign in with Google" : "Sign up with Google"}`}
+              text={`${screenRendering ? "Continue with" : "Sign up with Google"}`}
               onError={() => console.log("Login Failed")}
             ></GoogleLogin>
           </div>
