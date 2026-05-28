@@ -6,7 +6,7 @@ import chapman from '../assets/chapman.jpg';
 import ChickenWings from '../assets/chickenwings.jpg';
 import chinchinga from '../assets/chinchin.jpg';
 import eggroll from '../assets/eggroll.jpg';
-import FriedRice from '../assets/friedrice.jpg';
+import FriedRice from '../assets/friedRice.jpg';
 import Grillchiken from '../assets/grilledchiken.jpg';
 import grilledfish from '../assets/grilledfish.jpg';
 import Jollof from '../assets/jollofrice.jpg';
