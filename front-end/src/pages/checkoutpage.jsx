@@ -1,13 +1,24 @@
-import { useState } from "react";
+import { useState } from 'react';
 
-import { CreditCard, Lock } from "lucide-react";
-import toast from "react-hot-toast";
-import { useNavigate } from "react-router";
-import { v7 as uuidv7 } from "uuid";
+import {
+  CreditCard,
+  Lock,
+} from 'lucide-react';
+import toast from 'react-hot-toast';
+import { useNavigate } from 'react-router';
+import { v7 as uuidv7 } from 'uuid';
 
-import { CsButton } from "../component/button";
-import { Form, FormHeader, FormInput, MessageArea } from "../component/form";
-import { useAuth, useCart } from "../context/usecontext";
+import { CsButton } from '../component/button';
+import {
+  Form,
+  FormHeader,
+  FormInput,
+  MessageArea,
+} from '../component/form';
+import {
+  useAuth,
+  useCart,
+} from '../context/usecontext';
 
 export const CheckOut = () => {
   const { cart, addDeliveryDetails, clearCart } = useCart();
@@ -194,8 +205,11 @@ export const CheckOut = () => {
           <div className="mt-4">
             <CsButton
               text={`${isLoading ? "....." : "Confirm Order"}`}
+              textStyle={
+                isLoading ? "opacity-50 cursor-not-allowed animate-pulse" : ""
+              }
               action={() => handleSubmit(cart)}
-              className={`${isLoading ? "opacity-50 cursor-not-allowed animate-pulse" : ""} bg-orange-400/90 w-full p-4  rounded-xl text-lg text-black/80 hover:bg-orange-400/70 font-semibold`}
+              className={` bg-orange-400/90 w-full p-4  rounded-xl text-lg text-black/80 hover:bg-orange-400/70 font-semibold`}
             />
           </div>
         </div>
