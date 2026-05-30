@@ -31,7 +31,7 @@ export const CsButton = ({
       onClick={action}
       disabled={state}
     >
-      {Icon && <Icon className={`w-4 h-4 ${iconColor}`} />}
+      {Icon && <Icon className={` ${iconColor ? iconColor : "w-4 h-4"}`} />}
       <p className={textStyle}>{text}</p>
     </motion.button>
   );

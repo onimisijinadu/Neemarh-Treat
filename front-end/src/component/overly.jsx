@@ -9,14 +9,14 @@
 //   );
 // };
 
-export const Overlay = ({ toggleOverlay, isOpen }) => {
+export const Overlay = ({ toggleOverlay, isOpen, overLayClass }) => {
   if (!isOpen) return null;
   return (
     <div
       onClick={toggleOverlay}
       // Fixed ensures it covers the viewport even if you scroll
       // z-40 puts it below the mobile menu
-      className={`fixed inset-0 z-30 w-screen h-full bg-black/40 backdrop-blur-sm transition-opacity duration-300 `}
+      className={`${overLayClass ? overLayClass : "z-30"} ${isOpen ? "block" : "hidden"} fixed inset-0  w-screen h-full bg-black/40 backdrop-blur-sm transition-opacity duration-300 `}
     ></div>
   );
 };

@@ -14,7 +14,7 @@ import { FoodGallery } from '../data/foodGallery';
 export const CartContext = createContext();
 export const useCart = () => useContext(CartContext);
 export const CartProvider = ({ children }) => {
-  const [cart, setCart] = useState(()=>{
+  const [cart, setCart] = useState(() => {
     const savedItems = localStorage.getItem("cartItems");
 
     return savedItems ? JSON.parse(savedItems) : [];
@@ -178,34 +178,129 @@ export const AuthContext = createContext();
 export const useAuth = () => useContext(AuthContext);
 
 export const AuthProvider = ({ children }) => {
-
   const [showLoginModal, setShowLoginModal] = useState(false);
 
-
   const [user, setUser] = useState(() => {
-    const savedUser = localStorage.getItem("user");
-    return savedUser ? JSON.parse(savedUser) : null;
+    const savedUser = JSON.parse(localStorage.getItem("activeUser"));
+    return savedUser ? savedUser : null;
   });
   const logIn = (userData) => {
-    setUser(userData);
-    localStorage.setItem("user", JSON.stringify(userData));
+    const savedUsers = JSON.parse(localStorage.getItem("Users")) || [];
 
-    setShowLoginModal(false);
+    if (!savedUsers) {
+      throw new Error(
+        "No accounts found on this device. Please sign up first!",
+      );
+    }
+
+    const existingUser = savedUsers.find(
+      (user) => user.email.toLowerCase() === userData.email.toLowerCase(),
+    );
+
+    // const matchEmail =
+    //   existingUser.email.toLowerCase() === userData.email.toLowerCase();
+    // const matchPassword = existingUser.password === userData.password;
+
+    if (!existingUser || existingUser.password !== userData.password) {
+      throw new Error("Invalid email or password. Please try again.");
+    }
+    try {
+      setUser(existingUser);
+      localStorage.setItem("activeUser", JSON.stringify(existingUser.email));
+      // setShowLoginModal(false);
+    } catch (err) {
+      throw err;
+    } finally {
+      setShowLoginModal(false);
+      toast.success(`Welcome back, ${existingUser.name}!`);
+    }
   };
 
   const logOut = () => {
     setUser(null);
-    localStorage.removeItem("user");
+    localStorage.removeItem("activeUser");
+    toast.success("Logged out successfully.");
   };
 
   const createUser = (userData) => {
-    setUser(userData);
-    localStorage.setItem("user", JSON.stringify(userData));
+    // Get the user array or start with a new Array
+    const newAccount = JSON.parse(localStorage.getItem("Users")) || [];
 
-    setShowLoginModal(false)
+    const existingAccount = newAccount.some(
+      (acc) => acc.email.toLowerCase() === userData.email.toLowerCase(),
+    );
+
+    if (existingAccount) {
+      toast.error("Email already exists");
+    }
+    try {
+      // Save to localStorage first (Synchronous and bulletproof)
+
+      newAccount.push(userData);
+      localStorage.setItem("Users", JSON.stringify(newAccount));
+      // Update global React state
+      setUser(userData);
+      // Save the user as active on the local Storage,
+      localStorage.setItem("activeUser", JSON.stringify(userData.email));
+    } catch (err) {
+      console.error("Local storage error:", err);
+      throw err; // Throws error up to your handleSubmit try/catch block
+    } finally {
+      setShowLoginModal(false);
+      toast.success("Account created successfully!");
+    }
+  };
+
+  const AuthWithGoogle = (userData) => {
+    const googleUser = {
+      email: userData.email,
+      name: userData.name,
+      auth_method: "google",
+      google_id: userData.sub,
+    };
+
+    const existingAccount = JSON.parse(localStorage.getItem("Users")) || [];
+
+    const existingUser = existingAccount.some(
+      (acc) => acc.email === googleUser.email,
+    );
+
+    try {
+      if (existingUser) {
+        setUser(googleUser);
+
+        localStorage.setItem("activeUser", JSON.stringify(googleUser));
+
+        setShowLoginModal(false);
+        toast.success("Logged in successfully!");
+      } else {
+        existingAccount.push(googleUser);
+
+        localStorage.setItem("Users", JSON.stringify(existingAccount));
+
+        setUser(googleUser);
+
+        localStorage.setItem("activeUser", JSON.stringify(googleUser));
+        setShowLoginModal(false);
+        toast.success("Logged in successfully!");
+      }
+    } catch (err) {
+      toast.error("Error occurred while logging in with Google.");
+      throw err;
+    }
   };
   return (
-    <AuthContext.Provider value={{ logIn, user, logOut, createUser, setShowLoginModal, showLoginModal }}>
+    <AuthContext.Provider
+      value={{
+        logIn,
+        user,
+        logOut,
+        createUser,
+        setShowLoginModal,
+        showLoginModal,
+        AuthWithGoogle,
+      }}
+    >
       {children}
     </AuthContext.Provider>
   );

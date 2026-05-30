@@ -2,7 +2,6 @@ import {
   Menu,
   ShoppingCartIcon,
   Sparkles,
-  User,
   X,
 } from 'lucide-react';
 import {
@@ -11,6 +10,7 @@ import {
   useNavigate,
 } from 'react-router';
 
+import { CsButton } from '../component/button';
 import { Overlay } from '../component/overly';
 import {
   useAuth,
@@ -27,7 +27,14 @@ export const NavBar = ({ isOpen, toogleBtn }) => {
 
   const { cartCount } = useCart();
 
-  const { user, logOut } = useAuth();
+  const { user, logOut, setShowLoginModal } = useAuth();
+
+  // const [modal, setModal] = useState(true);
+
+  const handleLogin = () => {
+    setShowLoginModal(true);
+    toogleBtn();
+  };
 
   return (
     <>
@@ -44,28 +51,30 @@ export const NavBar = ({ isOpen, toogleBtn }) => {
             </span>
           </div>
         </div>
-        <div className={`hidden lg:flex items-center gap-3.5`}>
-          {MenuLinks.map((link) => {
-            const isActiveLink =
-              location.pathname === link.path ||
-              location.pathname.startsWith(`${link.path}/`);
+        {!user && (
+          <div className={`hidden lg:flex items-center gap-3.5`}>
+            {MenuLinks.map((link) => {
+              const isActiveLink =
+                location.pathname === link.path ||
+                location.pathname.startsWith(`${link.path}/`);
 
-            return (
-              <Link
-                key={link.name}
-                className="relative flex flex-col items-center gap-3 hover:bg-orange-500/10 hover:text-orange-400  px-3 py-2 rounded-lg transition-colors duration-300"
-                to={link.path}
-              >
-                {link.name}
-                {isActiveLink && (
-                  <div className="absolute w-3/4 h-0.5 bg-orange-500 -bottom-0.5" />
+              return (
+                <Link
+                  key={link.name}
+                  className="relative flex flex-col items-center gap-3 hover:bg-orange-500/10 hover:text-orange-400  px-3 py-2 rounded-lg transition-colors duration-300"
+                  to={link.path}
+                >
+                  {link.name}
+                  {isActiveLink && (
+                    <div className="absolute w-3/4 h-0.5 bg-orange-500 -bottom-0.5" />
 
-                  // <div className="w-2 h-2 bg-orange-400 rounded-full animate-pulse" />
-                )}
-              </Link>
-            );
-          })}
-        </div>
+                    // <div className="w-2 h-2 bg-orange-400 rounded-full animate-pulse" />
+                  )}
+                </Link>
+              );
+            })}
+          </div>
+        )}
         <div className="flex gap-5 items-center max-w-full">
           <div
             onClick={() => navigate("/cart")}
@@ -78,17 +87,17 @@ export const NavBar = ({ isOpen, toogleBtn }) => {
               </span>
             )}
           </div>
-
-          {user && (
-            <div
-              onClick={() => navigate("/userDashboard")}
-              className={`hidden lg:block border border-orange-400/60 rounded-full p-1`}
-            >
-              <User className="w-7 h-7 font-bold text-orange-500/70" />
-            </div>
+          {!user && (
+            <CsButton
+              text={`Login`}
+              action={handleLogin}
+              className={`hidden lg:flex items-center justify-center bg-orange-400/90 w-full py-1.5 px-4  rounded-xl text-lg text-black/80 hover:bg-orange-400/70 font-semibold`}
+            />
           )}
 
-          <div className="flex flex-col justify-center items-center lg:hidden ">
+          <div
+            className={`flex flex-col justify-center items-center ${user ? "" : "lg:hidden"}`}
+          >
             <div onClick={toogleBtn} className="relative">
               <Menu
                 className={`w-7 h-7 text-orange-500/70 ${isOpen ? "hidden" : "block"} transition-transform duration-300`}
@@ -100,7 +109,7 @@ export const NavBar = ({ isOpen, toogleBtn }) => {
 
             {/* Mobile Menu Container */}
             <div
-              className={`fixed z-50 bg-white shadow-xl w-full h-fit p-6 flex flex-col gap-4 text-black/80 items-start top-18.25 sm:top-22.25 left-0 transition-transform duration-300 ${
+              className={`fixed z-50 bg-white shadow-xl w-full md:w-1/3 lg:w-1/5 h-fit p-6 flex flex-col gap-4 text-black/80 items-start top-18.25 sm:top-22.25 md:top-23.25 lg:top-24.25 right-0 transition-transform duration-300 ${
                 isOpen ? "translate-x-0" : "translate-x-full"
               }`}
             >
@@ -118,25 +127,32 @@ export const NavBar = ({ isOpen, toogleBtn }) => {
                   ))}
                   <button
                     onClick={() => {
-                      logOut(); // Your global context logout function
-                      toogleBtn(); // Close mobile menu if open
+                      logOut();
+                      toogleBtn();
                     }}
-                    className="w-full text-left text-red-500 hover:bg-red-500/10 ..."
+                    className="w-full text-left hover:bg-red-500/10 hover:text-red-600 font-semibold rounded-lg p-3"
                   >
                     Logout
                   </button>
                 </>
               ) : (
-                MenuLinks.map((link) => (
-                  <Link
-                    key={link.name}
-                    to={link.path}
-                    onClick={toogleBtn} // Close menu when a link is clicked
-                    className="w-full hover:bg-orange-500/10 hover:text-orange-500 font-semibold rounded-lg p-3 border-b border-gray-100 last:border-0"
-                  >
-                    {link.name}
-                  </Link>
-                ))
+                <>
+                  {MenuLinks.map((link) => (
+                    <Link
+                      key={link.name}
+                      to={link.path}
+                      onClick={toogleBtn} // Close menu when a link is clicked
+                      className="w-full hover:bg-orange-500/10 hover:text-orange-500 font-semibold rounded-lg p-3 border-b border-gray-100 last:border-0"
+                    >
+                      {link.name}
+                    </Link>
+                  ))}
+                  <CsButton
+                    text={`Login`}
+                    action={handleLogin}
+                    className={`flex items-center justify-center bg-orange-400/90 w-full py-1.5 px-4  rounded-xl text-lg text-black/80 hover:bg-orange-400/70 font-semibold`}
+                  />
+                </>
               )}
             </div>
           </div>

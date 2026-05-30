@@ -2,6 +2,7 @@ import { useState } from 'react';
 
 import {
   CreditCard,
+  LoaderIcon,
   Lock,
 } from 'lucide-react';
 import toast from 'react-hot-toast';
@@ -204,12 +205,15 @@ export const CheckOut = () => {
           </div>
           <div className="mt-4">
             <CsButton
-              text={`${isLoading ? "....." : "Confirm Order"}`}
+              text={`${!isLoading ? "Confirm Order" : ""}`}
+              Icon={isLoading ? LoaderIcon : ""}
+              iconColor="text-black/80 w-6 h-6 animate-spin duration-500 text-center flex justify-center items-center"
+              state={isLoading}
               textStyle={
                 isLoading ? "opacity-50 cursor-not-allowed animate-pulse" : ""
               }
               action={() => handleSubmit(cart)}
-              className={` bg-orange-400/90 w-full p-4  rounded-xl text-lg text-black/80 hover:bg-orange-400/70 font-semibold`}
+              className={`flex items-center justify-center bg-orange-400/90 w-full p-4  rounded-xl text-lg text-black/80 hover:bg-orange-400/70 font-semibold`}
             />
           </div>
         </div>
