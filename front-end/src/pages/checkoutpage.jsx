@@ -5,16 +5,15 @@ import {
   LoaderIcon,
   Lock,
 } from 'lucide-react';
-import toast from 'react-hot-toast';
+import { PaystackButton } from 'react-paystack';
 import { useNavigate } from 'react-router';
+// import toast from 'react-hot-toast';
+import { toast } from 'react-toastify';
 import { v7 as uuidv7 } from 'uuid';
 
-import { CsButton } from '../component/button';
 import {
-  Form,
   FormHeader,
   FormInput,
-  MessageArea,
 } from '../component/form';
 import {
   useAuth,
@@ -32,16 +31,22 @@ export const CheckOut = () => {
   const [isLoading, setIsLoading] = useState(false);
 
   const [deliveryDetails, setDeliveryDetails] = useState({
-    customerName: "",
+    customerName: user.name || "",
     customerPhone: "",
+    customerEmail: user.email || "",
     deliveryAddress: "",
   });
 
-  const generateOrderId = () => {
-    const orderId = uuidv7().replace(/-/g, "").slice(0, 13);
-    return orderId;
-  };
-  const id = generateOrderId();
+  const [orderId, setOrderId] = useState(() => {
+    const id = `ORD-${uuidv7().replace(/-/g, "").slice(0, 10).toUpperCase()}`;
+    return id;
+  });
+
+  // const generateOrderId = () => {
+  //   const orderId = uuidv7().replace(/-/g, "").slice(0, 13);
+  //   return orderId;
+  // };
+  const id = orderId;
   const time = new Date();
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -54,32 +59,145 @@ export const CheckOut = () => {
     setChecked((prev) => !prev);
   };
 
-  const handleSubmit = (product) => {
-    //console.log(deliveryDetails);
-    if (
-      !deliveryDetails.customerName ||
-      !deliveryDetails.customerPhone ||
-      !deliveryDetails.deliveryAddress ||
-      !checked
-    ) {
-      toast.error("Please fill all form fields");
-      return;
-    }
-    setIsLoading(true);
-    setTimeout(() => {
-      toast.success("Order placed successfully");
-      addDeliveryDetails(deliveryDetails, product, id, time);
-      clearCart();
-      navigate("/admin");
-      setIsLoading(false);
-    }, 3000);
-  };
   const subTotal = cart.reduce(
     (acc, item) => acc + item.price * item.quantity,
     0,
   );
   const DeliveryFee = 1500;
 
+  const finalTotal = subTotal + DeliveryFee;
+
+  // const config = useMemo(() => {
+  //   return {
+  //     reference: orderId,
+  //     email: deliveryDetails.customerEmail || "guest@neamahs.com",
+  //     amount: finalTotal * 100, // Converts Naira to Kobo accurately
+  //     publicKey: "pk_test_84695b660b5e0acfe6f40ef7f3d9912b7e0fc45b",
+  //     metadata: {
+  //       custom_fields: [
+  //         {
+  //           display_name: "Customer Name",
+  //           variable_name: "customer_name",
+  //           value: deliveryDetails.customerName,
+  //         },
+  //         {
+  //           display_name: "Phone Number",
+  //           variable_name: "customer_phone",
+  //           value: deliveryDetails.customerPhone,
+  //         },
+  //         {
+  //           display_name: "Delivery Address",
+  //           variable_name: "delivery_address",
+  //           value: deliveryDetails.deliveryAddress,
+  //         },
+  //       ],
+  //     },
+
+  // }, [orderId, finalTotal]);
+
+  // const config = {
+  //   reference: `ORD-${uuidv7().replace(/-/g, "").slice(0, 10).toUpperCase()}`,
+  //   email: deliveryDetails.customerEmail || "",
+  //   phone: deliveryDetails.customerPhone || "",
+  //   amount: finalTotal * 100,
+  //   publicKey: "pk_test_84695b660b5e0acfe6f40ef7f3d9912b7e0fc45b",
+  //   metadata: {
+  //     custom_fields: [
+  //       {
+  //         display_name: "Customer Name",
+  //         variable_name: "customer_name",
+  //         value: deliveryDetails.customerName,
+  //       },
+  //       {
+  //         display_name: "Phone Number",
+  //         variable_name: "customer_phone",
+  //         value: deliveryDetails.customerPhone,
+  //       },
+  //       {
+  //         display_name: "Delivery Address",
+  //         variable_name: "delivery_address",
+  //         value: deliveryDetails.deliveryAddress,
+  //       },
+  //     ],
+  //   },
+  //   onSuccess: (reference) => {
+  //     console.log("SUCCESS CALLBACK FIRED");
+  //     console.log(reference);
+  //     try {
+  //       toast.success("Payment successful");
+  //       addDeliveryDetails(deliveryDetails, cart, reference.reference, time);
+  //       clearCart();
+  //       navigate("/menu");
+  //     } catch (err) {
+  //       toast.error("error generating receipt.");
+  //     } finally {
+  //       setIsLoading(false);
+  //     }
+  //   },
+
+  //   onClose: () => {
+  //     setIsLoading(false);
+  //     toast.error("Payment cancelled");
+  //   },
+  // };
+
+  const config = {
+    reference: orderId,
+    email: deliveryDetails.customerEmail || "guest@neamahs.com",
+    amount: finalTotal * 100,
+    publicKey: "pk_test_84695b660b5e0acfe6f40ef7f3d9912b7e0fc45b",
+
+    metadata: {
+      custom_fields: [
+        {
+          display_name: "Customer Name",
+          variable_name: "customer_name",
+          value: deliveryDetails.customerName,
+        },
+        {
+          display_name: "Phone Number",
+          variable_name: "customer_phone",
+          value: deliveryDetails.customerPhone,
+        },
+        {
+          display_name: "Delivery Address",
+          variable_name: "delivery_address",
+          value: deliveryDetails.deliveryAddress,
+        },
+      ],
+    },
+
+    onSuccess: (reference) => {
+      console.log("SUCCESS", reference);
+
+      toast.success("Payment successful");
+
+      addDeliveryDetails(deliveryDetails, cart, reference.reference, time);
+
+      clearCart();
+
+      setIsLoading(false);
+
+      navigate("/menu");
+    },
+
+    onClose: () => {
+      setIsLoading(false);
+      toast.error("Payment cancelled");
+    },
+  };
+
+  // console.log(initializePayment);
+  const isValid =
+    deliveryDetails.customerName != "" &&
+    deliveryDetails.deliveryAddress != "" &&
+    deliveryDetails.customerPhone.length === 11 &&
+    /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(
+      deliveryDetails.customerEmail,
+    ) &&
+    checked;
+
+  const emptyCart = cart.length === 0;
   return (
     // 1. Ensure the outermost wrapper has NO 'overflow' classes
     <div className="px-2.5 py-4 sm:px-10 lg:px-10 sm:py-6">
@@ -93,7 +211,7 @@ export const CheckOut = () => {
         {/* LEFT COLUMN: Delivery & Payment (This scrolls naturally) */}
         <div className="w-full lg:w-2/3">
           <div className="space-y-6">
-            <Form>
+            <div className="flex flex-col gap-3 my-4 p-7 border border-orange-400/60 rounded-xl bg-gray-400/10 text-2xl font-bold">
               <FormHeader className="mb-5">Delivery Information</FormHeader>
               <FormInput
                 labelName="customerName"
@@ -113,15 +231,33 @@ export const CheckOut = () => {
               >
                 Phone Number
               </FormInput>
-              <MessageArea
+              <FormInput
+                labelName="customerEmail"
+                inputName="customerEmail"
+                inputType="email"
+                inputValue={deliveryDetails.customerEmail}
+                onChange={handleChange}
+              >
+                Email
+              </FormInput>
+              <FormInput
+                labelName="deliveryAddress"
+                inputName="deliveryAddress"
+                inputType="text"
+                inputValue={deliveryDetails.deliveryAddress}
+                onChange={handleChange}
+              >
+                Address
+              </FormInput>
+              {/* <MessageArea
                 Label="Delivery Address"
                 inputName="deliveryAddress"
                 message="Enter address"
                 height="h-20"
                 inputValue={deliveryDetails.deliveryAddress}
                 onChange={handleChange}
-              />
-            </Form>
+              /> */}
+            </div>
           </div>
 
           <div className="flex flex-col gap-3 my-4 p-7 border border-orange-400/30 rounded-xl bg-gray-400/10">
@@ -198,23 +334,25 @@ export const CheckOut = () => {
 
             <div className="flex justify-between items-center text-orange-400 font-bold pt-2">
               <p className="text-xl">Total</p>
-              <span className="text-2xl">
-                ₦{(subTotal + DeliveryFee).toLocaleString()}
-              </span>
+              <span className="text-2xl">₦{finalTotal.toLocaleString()}</span>
             </div>
           </div>
-          <div className="mt-4">
-            <CsButton
-              text={`${!isLoading ? "Confirm Order" : ""}`}
-              Icon={isLoading ? LoaderIcon : ""}
-              iconColor="text-black/80 w-6 h-6 animate-spin duration-500 text-center flex justify-center items-center"
-              state={isLoading}
-              textStyle={
-                isLoading ? "opacity-50 cursor-not-allowed animate-pulse" : ""
-              }
-              action={() => handleSubmit(cart)}
-              className={`flex items-center justify-center bg-orange-400/90 w-full p-4  rounded-xl text-lg text-black/80 hover:bg-orange-400/70 font-semibold`}
-            />
+          <div onClick={() => setIsLoading(true)} className="mt-4">
+            {isValid && (
+              <PaystackButton
+                disabled={!isValid || isLoading || emptyCart}
+                className={`${isLoading ? " opcaity-50 cursor-not-allowed" : ""} flex items-center justify-center bg-orange-400/90 w-full p-4  rounded-xl text-lg text-black/80 hover:bg-orange-400/70 font-semibold`}
+                {...config}
+                onSuccess={config.onSuccess}
+                onClose={config.onClose}
+              >
+                {isLoading ? (
+                  <LoaderIcon className="w-6 h-6 animate-spin duration-400" />
+                ) : (
+                  "Confirm Order"
+                )}
+              </PaystackButton>
+            )}
           </div>
         </div>
       </div>

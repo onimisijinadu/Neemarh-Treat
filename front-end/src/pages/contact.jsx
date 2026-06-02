@@ -7,7 +7,8 @@ import {
   Phone,
 } from 'lucide-react';
 import { motion } from 'motion/react';
-import { toast } from 'react-hot-toast';
+// import { toast } from 'react-hot-toast';
+import { toast } from 'react-toastify';
 
 import {
   Form,
@@ -65,7 +66,7 @@ export const ContactUs = () => {
   };
 
   return (
-    <div className="bg-black/90 flex flex-col justify-center itesm-center  gap-4  px-3 py-4 sm:px-10 lg:px-10 sm:py-6  text-sm border-t border-t-brandborder max-w-screen overflow-hidden">
+    <div className="bg-black/90 flex flex-col justify-center items-center  gap-4  px-3 py-4 sm:px-10 lg:px-10 sm:py-6  text-sm border-t border-t-brandborder max-w-screen overflow-hidden">
       <div className="flex flex-col gap-4.5 text-center my-4">
         <p className="text-3xl md:text-5xl font-semibold text-white">
           Get in Touch
@@ -74,7 +75,7 @@ export const ContactUs = () => {
           We'd love to hear from you. Reach out for any inquiries or support.
         </p>
       </div>
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 lg:max-w-4xl lg:mx-47 my-3 items-center">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 w-full md:w-155 lg:w-225 lg:mx-47 my-3 items-center">
         {[
           {
             icon: <Phone className="w-8 h-8" />,
@@ -106,7 +107,7 @@ export const ContactUs = () => {
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.2 }}
-            className="flex flex-col gap-1 p-7.5 bg-gray-400/10 border border-orange-400/50 rounded-xl w-full"
+            className="flex flex-col gap-1 p-7.5 bg-gray-400/10 border border-orange-400/50 rounded-xl w-full "
           >
             <div className="pt-3 text-orange-400/90 my-5">{data.icon}</div>
             <h2 className=" text-xl md:text-2xl font-semibold">
@@ -121,6 +122,7 @@ export const ContactUs = () => {
         initial={{ opacity: 0, y: 20 }}
         whileInView={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.2 }}
+        className="w-full md:w-155 lg:w-225"
       >
         <Form
           action={handleSubmit}

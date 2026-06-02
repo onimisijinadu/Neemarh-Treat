@@ -1,17 +1,18 @@
-import { useState } from 'react';
-
 import { Outlet } from 'react-router';
 
 import { LoginModal } from '../auth/auth';
 import { Overlay } from '../component/overly';
-import { useAuth } from '../context/usecontext';
+import {
+  useAuth,
+  useOverlay,
+} from '../context/usecontext';
 import { Footer } from './footer';
 import { NavBar } from './navbar';
 
 export const Layout = () => {
   const { showLoginModal } = useAuth();
 
-  const [isOpenNav, setisOpenNav] = useState(false);
+  const { isOpenNav, setisOpenNav } = useOverlay();
 
   const handletoggle = () => {
     setisOpenNav((prev) => !prev);

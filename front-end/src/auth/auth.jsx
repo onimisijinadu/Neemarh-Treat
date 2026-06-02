@@ -1,19 +1,25 @@
 import { useState } from 'react';
 
 import { jwtDecode } from 'jwt-decode';
-import toast from 'react-hot-toast';
 import { useNavigate } from 'react-router';
+// import toast from 'react-hot-toast';
+import { toast } from 'react-toastify';
 
 import { GoogleLogin } from '@react-oauth/google';
 
 import { LoginForm } from '../component/loginForm';
 import { Overlay } from '../component/overly';
 import { SignUpForm } from '../component/signUpForm';
-import { useAuth } from '../context/usecontext';
+import {
+  useAuth,
+  useOverlay,
+} from '../context/usecontext';
 import { ValidateFormInputs } from '../utils/validation';
 
 export const LoginModal = () => {
   const { logIn, createUser, AuthWithGoogle, setShowLoginModal } = useAuth();
+
+  const { isOpenNav, setisOpenNav } = useOverlay();
 
   const navigate = useNavigate();
 
@@ -58,6 +64,7 @@ export const LoginModal = () => {
     try {
       logIn(userDetails);
       setModal(false);
+      setisOpenNav(false);
       navigate("/menu");
     } catch (err) {
       toast.error(err.message);
@@ -75,11 +82,11 @@ export const LoginModal = () => {
     );
 
     if (!validation.isValid) {
-      toast.error(validation.message);
+      toast.warning(validation.message);
       return;
     }
     if (userDetails.password !== userDetails.confirmPassword) {
-      toast.error("Passwords do not match. Please re-type your password.");
+      toast.warning("Passwords do not match. Please re-type your password.");
       return;
     }
     setLoading(true);
@@ -88,6 +95,7 @@ export const LoginModal = () => {
       createUser(userDetails);
       navigate("/menu");
       setModal(false);
+      setisOpenNav(false);
       setUserDetails({
         email: "",
         name: "",
@@ -148,6 +156,8 @@ export const LoginModal = () => {
                   console.log(decoded);
                   AuthWithGoogle(decoded);
                   setModal(false);
+                  setisOpenNav(false);
+                  navigate("/menu");
                 }}
                 // login_uri={}
                 useOneTap

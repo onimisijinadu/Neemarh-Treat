@@ -5,25 +5,29 @@ import {
   ShoppingCart,
   Sparkles,
   Trash2,
-} from "lucide-react";
-import toast from "react-hot-toast";
-import { useNavigate } from "react-router";
+} from 'lucide-react';
+import { useNavigate } from 'react-router';
+// import toast from "react-hot-toast";
+import { toast } from 'react-toastify';
 
-import { CsButton } from "../component/button";
-import { useCart, useAuth } from "../context/usecontext";
+import { CsButton } from '../component/button';
+import {
+  useAuth,
+  useCart,
+} from '../context/usecontext';
 
 export const CartDetails = () => {
   const { cart, cartCount, removeFromCart, addToCart, setCart } = useCart();
-  const {user, setShowLoginModal} = useAuth();
+  const { user, setShowLoginModal } = useAuth();
 
   const navigate = useNavigate();
 
-  const handleCheckOut = ()=>{
-    if(!user){
+  const handleCheckOut = () => {
+    if (!user) {
       setShowLoginModal(true);
       console.log(user);
       return;
-    };
+    }
     navigate("/checkout");
   };
 
@@ -193,7 +197,7 @@ export const CartDetails = () => {
                 Icon={ArrowRight}
                 iconColor={`font-extrabold w-4.5 h-4.5`}
                 action={handleCheckOut}
-               // action={() => navigate("/checkout")}
+                // action={() => navigate("/checkout")}
                 className={`flex flex-row-reverse items-center justify-center gap-1.5 text-lg md:text-xl hover:bg-orange-400/95 text-black/80 bg-orange-400/85 mt-4 rounded-xl font-bold p-4`}
               />
               <p className="text-center text-gray-300/40">

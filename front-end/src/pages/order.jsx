@@ -1,4 +1,7 @@
-import { useEffect, useState } from "react";
+import {
+  useEffect,
+  useState,
+} from 'react';
 
 import {
   ArrowLeft,
@@ -9,13 +12,18 @@ import {
   ShoppingCart,
   Sparkles,
   Star,
-} from "lucide-react";
-import { motion } from "motion/react";
-import toast from "react-hot-toast";
-import { Link, useNavigate, useParams } from "react-router";
+} from 'lucide-react';
+import { motion } from 'motion/react';
+// import toast from 'react-hot-toast';
+import {
+  Link,
+  useNavigate,
+  useParams,
+} from 'react-router';
+import { toast } from 'react-toastify';
 
-import { CsButton } from "../component/button";
-import { useCart } from "../context/usecontext";
+import { CsButton } from '../component/button';
+import { useCart } from '../context/usecontext';
 
 export const Orderdetails = () => {
   const navigate = useNavigate();
@@ -208,9 +216,9 @@ export const Orderdetails = () => {
               <div className="flex justify-between items-center gap-2 ">
                 <CsButton
                   Icon={Minus}
-                  state={btnState}
+                  state={quantity <= 1}
                   action={handleDecrement}
-                  className={`text-orange-400/75 font-semibold border border-orange-400/75 rounded-lg p-2 bg-gray-900/70 hover:bg-orange-400/50`}
+                  className={`${quantity <= 1 ? "cursor-not-allowed" : "cursor-pointer"} text-orange-400/75 font-semibold border border-orange-400/75 rounded-lg p-2 bg-gray-900/70 hover:bg-orange-400/50`}
                 />
                 <p>{quantity}</p>
                 <CsButton

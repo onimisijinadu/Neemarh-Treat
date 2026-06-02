@@ -1,19 +1,29 @@
-export const Form = ({ children, action, className, BtnText, btnStyle, option }) => {
+export const Form = ({
+  children,
+  action,
+  className,
+  BtnText,
+  btnStyle,
+  option,
+  btnClass,
+  btnDiv,
+}) => {
   return (
     <form
       onSubmit={action}
-      className={`${className ? className : "flex flex-col gap-3 my-4 p-7 border border-orange-400/60 rounded-xl bg-gray-400/10 text-2xl font-bold"}`}
+      className={`${className ? className : "flex flex-col gap-3 my-4 p-7 border border-orange-400/60 rounded-xl bg-gray-400/10 text-2xl font-bold w-full"}`}
     >
       {children}
       {BtnText && (
-        <div className="flex justify-center items-center w-full">
+        <div
+          className={`${btnDiv ? btnDiv : "flex justify-center items-center w-full"}`}
+        >
           <button
             type="submit"
-            className={`text-center w-full ${btnStyle ? btnStyle : "md:w-3/6 lg:w-3/9"}  bg-orange-400/90 text-lg font-semibold py-2 rounded-xl text-black/90 hover:bg-orange-400/70 cursor-pointer my-4`}
+            className={`${btnClass ? btnClass : "text-center w-full bg-orange-400/90 text-lg font-semibold py-2 rounded-xl text-black/90 hover:bg-orange-400/70 cursor-pointer my-4"} ${btnStyle ? btnStyle : "md:w-3/6 lg:w-3/9"}  `}
           >
             {BtnText}
           </button>
-          
         </div>
       )}
       <div className="w-full">{option}</div>
@@ -37,6 +47,7 @@ export const FormInput = ({
   optionalClassName,
   labelClassName,
   checked,
+  ...props
 }) => {
   return (
     <div
@@ -48,13 +59,14 @@ export const FormInput = ({
         name={inputName}
         onChange={onChange}
         value={inputValue}
+        {...props}
         checked={checked}
         max={max}
         min={min}
         step={step}
         required
         placeholder=" "
-        className={`${className ? className : "border border-orange-400/20 rounded-xl bg-gray-400/5 peer  focus:outline-none h-11 px-4 text-sm text-white/90"}`}
+        className={`${className ? className : "border border-orange-400/20 rounded-xl bg-gray-400/5 peer  focus:outline-none h-14 px-4 text-sm text-white/90"}`}
       />
       <label
         htmlFor={labelName}

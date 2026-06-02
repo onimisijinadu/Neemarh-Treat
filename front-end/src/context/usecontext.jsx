@@ -5,7 +5,7 @@ import {
   useState,
 } from 'react';
 
-import toast from 'react-hot-toast';
+import { toast } from 'react-toastify';
 
 import { FoodGallery } from '../data/foodGallery';
 
@@ -19,7 +19,16 @@ export const CartProvider = ({ children }) => {
 
     return savedItems ? JSON.parse(savedItems) : [];
   });
-  const [delivery, setDelivery] = useState([]);
+  const [delivery, setDelivery] = useState(() => {
+    const orders = localStorage.getItem("orders");
+
+    return orders ? JSON.parse(orders) : [];
+  });
+
+  //update the order table when there is change in the delivery state
+  useEffect(() => {
+    localStorage.setItem("orders", JSON.stringify(delivery));
+  }, [delivery]);
 
   const [meals, setMeals] = useState(() => {
     const savedMeals = localStorage.getItem("NeamahsMeals");
@@ -71,17 +80,6 @@ export const CartProvider = ({ children }) => {
     }
   }, [cart]);
 
-  // useEffect(() => {
-  //   const savedOrders = localStorage.getItem("orders");
-  //   if (savedOrders) {
-  //     setDelivery(JSON.parse(savedOrders));
-  //   }
-  // }, []);
-
-  // useEffect(() => {
-  //   localStorage.setItem("orders", JSON.stringify(delivery));
-  // }, [delivery]);
-
   // function to add to cart
   const addToCart = (product, quantity) => {
     if (!product || !product.id) return;
@@ -116,37 +114,46 @@ export const CartProvider = ({ children }) => {
 
   const cartCount = cart.reduce((total, item) => total + item.quantity, 0);
 
-  // const addDeliveryDetails = (details, orderId, date) => {
-  //   if (!details) return;
-  //   setDelivery((details) => {
-  //     // find it it already exist
-  //     const itExists = delivery.find((item) => item.id === orderId);
-  //     if (itExists) {
-  //       toast.error("Order already placed...");
-  //     }
-  //     return [...details, { orderId: orderId, date: date }];
-  //   });
-  // };
   const addDeliveryDetails = (details, products, orderId, date) => {
     if (!details) return;
 
     // Check if order already exists BEFORE calling the setter
-    const itExists = delivery.find((item) => item.orderId === orderId);
-    if (itExists) {
-      toast.error("Order already placed...");
-      return; // Stop here if it exists
-    }
 
-    setDelivery((prevDelivery) => [
-      ...prevDelivery,
-      {
-        ...details, // This spreads customerName, customerPhone, deliveryAddress
+    setDelivery((prevDelivery) => {
+      const itExists = delivery.some((item) => item.orderId === orderId);
+      if (itExists) {
+        toast.error("Order already placed...");
+        return prevDelivery; // Stop here if it exists
+      }
+
+      const finalOrderReceipt = {
+        customerName: details.name || "Guest Customer",
+        customerPhone: details.phone,
+        customerEmail: details.email,
+        deliveryAddress: details.address,
         orderId: orderId,
         products: products,
         date: date.toLocaleString(), // Format the date so it's a string
         status: "Pending", // Good to add a default status for your dashboard cards!
-      },
-    ]);
+      };
+
+      //  toast.success(`Order ${orderId} placed successfully!`);
+      return [finalOrderReceipt, ...prevDelivery];
+    });
+
+    clearCart();
+  };
+
+  // update order status in admin
+  const updateOrderStatus = (orderId, newStatus) => {
+    setDelivery((prevOrders) =>
+      prevOrders.map((order) =>
+        order.orderId === orderId
+          ? { ...order, status: newStatus } // Modifies status string dynamically
+          : order,
+      ),
+    );
+    // toast.success(`Order ${orderId} updated to ${newStatus}`);
   };
 
   // const finalPrice = cart.reduce
@@ -255,6 +262,7 @@ export const AuthProvider = ({ children }) => {
     const googleUser = {
       email: userData.email,
       name: userData.name,
+      password: "", // Placeholder password for Google users
       auth_method: "google",
       google_id: userData.sub,
     };
@@ -294,6 +302,7 @@ export const AuthProvider = ({ children }) => {
       value={{
         logIn,
         user,
+        setUser,
         logOut,
         createUser,
         setShowLoginModal,
@@ -303,5 +312,18 @@ export const AuthProvider = ({ children }) => {
     >
       {children}
     </AuthContext.Provider>
+  );
+};
+
+export const OverlayContext = createContext();
+export const useOverlay = () => useContext(OverlayContext);
+
+export const OverlayProvider = ({ children }) => {
+  const [isOpenNav, setisOpenNav] = useState(false);
+
+  return (
+    <OverlayContext.Provider value={{ isOpenNav, setisOpenNav }}>
+      {children}
+    </OverlayContext.Provider>
   );
 };

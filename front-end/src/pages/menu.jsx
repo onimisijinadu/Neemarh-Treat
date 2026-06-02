@@ -8,8 +8,9 @@ import {
   TrendingUp,
 } from 'lucide-react';
 import { motion } from 'motion/react';
-import toast from 'react-hot-toast';
+// import toast from 'react-hot-toast';
 import { useNavigate } from 'react-router';
+import { toast } from 'react-toastify';
 
 import { CsButton } from '../component/button';
 import { useCart } from '../context/usecontext';

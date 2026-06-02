@@ -23,7 +23,7 @@ export const UserNav = [
   },
   {
     name: "My Account", // Acts as the single doorway to dashboard, settings, and orders
-    path: "/userDashboard",
+    path: "/account",
   },
   {
     name: "Contact Support",

@@ -1,9 +1,17 @@
 import {
+  useEffect,
+  useRef,
+  useState,
+} from 'react';
+
+import {
   Menu,
   ShoppingCartIcon,
   Sparkles,
+  User,
   X,
 } from 'lucide-react';
+import { motion } from 'motion/react';
 import {
   Link,
   useLocation,
@@ -25,17 +33,37 @@ export const NavBar = ({ isOpen, toogleBtn }) => {
   const location = useLocation();
   const navigate = useNavigate();
 
+  const menuRef = useRef(null);
+
   const { cartCount } = useCart();
 
   const { user, logOut, setShowLoginModal } = useAuth();
 
-  // const [modal, setModal] = useState(true);
+  const [modal, setModal] = useState(false);
 
   const handleLogin = () => {
     setShowLoginModal(true);
     toogleBtn();
   };
 
+  const handleBtnClick = () => {
+    setModal((prev) => !prev);
+  };
+
+  useEffect(() => {
+    const handleMouseOver = (event) => {
+      if (menuRef.current && !menuRef.current.contains(event.target)) {
+        setModal(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleMouseOver);
+
+    return () => {
+      document.removeEventListener("mousedown", handleMouseOver);
+    };
+  }, []);
+  // const profileName = user.name.split("")[0];
   return (
     <>
       <Overlay isOpen={isOpen} toggleOverlay={toogleBtn} />
@@ -51,7 +79,30 @@ export const NavBar = ({ isOpen, toogleBtn }) => {
             </span>
           </div>
         </div>
-        {!user && (
+        {user ? (
+          <div className={`hidden lg:flex items-center gap-3.5`}>
+            {UserNav.map((link) => {
+              const isActiveLink =
+                location.pathname === link.path ||
+                location.pathname.startsWith(`${link.path}/`);
+
+              return (
+                <Link
+                  key={link.name}
+                  className="relative flex flex-col items-center gap-3 hover:bg-orange-500/10 hover:text-orange-400  px-3 py-2 rounded-lg transition-colors duration-300"
+                  to={link.path}
+                >
+                  {link.name}
+                  {isActiveLink && (
+                    <div className="absolute w-3/4 h-0.5 bg-orange-500 -bottom-0.5" />
+
+                    // <div className="w-2 h-2 bg-orange-400 rounded-full animate-pulse" />
+                  )}
+                </Link>
+              );
+            })}
+          </div>
+        ) : (
           <div className={`hidden lg:flex items-center gap-3.5`}>
             {MenuLinks.map((link) => {
               const isActiveLink =
@@ -94,9 +145,49 @@ export const NavBar = ({ isOpen, toogleBtn }) => {
               className={`hidden lg:flex items-center justify-center bg-orange-400/90 w-full py-1.5 px-4  rounded-xl text-lg text-black/80 hover:bg-orange-400/70 font-semibold`}
             />
           )}
+          {/* User Profile Button */}
+          {user && (
+            <div className="hidden lg:block">
+              <CsButton
+                text={user.name}
+                Icon={User}
+                iconColor="text-orange-500 w-4 h-4"
+                action={handleBtnClick}
+                className={`hidden lg:flex w-full gap-2 text-base items-center bg-gray-950 border border-orange-400/50 rounded-lg py-2 px-4 text-white`}
+              />
+              <div ref={menuRef} className="relative">
+                {modal && (
+                  <motion.div
+                    initial={{ opacity: 0, y: -5, scale: 0.95 }}
+                    whileInView={{ opacity: 1, y: 0, scale: 1 }}
+                    transition={{ duration: 1 }}
+                    className={`fixed top-20 right-15 bg-gray-950 text-white/70 rounded-lg py-2 w-40 flex flex-col items-start border border-orange-400/30 px-3 shadow-xl shadow-black/60 ${modal ? "translate-x-0" : "translate-x-full"}`}
+                  >
+                    <Link
+                      to={"/account"}
+                      onClick={() => setModal(false)}
+                      className="w-full hover:bg-orange-500/10 hover:text-orange-500 font-semibold p-3 rounded-lg"
+                    >
+                      My Account
+                    </Link>
+                    <button
+                      onClick={() => {
+                        logOut();
+                        toogleBtn();
+                        navigate("/");
+                      }}
+                      className="w-full text-left hover:bg-red-500/10 hover:text-red-600 font-semibold rounded-lg p-3"
+                    >
+                      Logout
+                    </button>
+                  </motion.div>
+                )}
+              </div>
+            </div>
+          )}
 
           <div
-            className={`flex flex-col justify-center items-center ${user ? "" : "lg:hidden"}`}
+            className={`flex flex-col justify-center items-center lg:hidden`}
           >
             <div onClick={toogleBtn} className="relative">
               <Menu
@@ -129,6 +220,7 @@ export const NavBar = ({ isOpen, toogleBtn }) => {
                     onClick={() => {
                       logOut();
                       toogleBtn();
+                      navigate("/");
                     }}
                     className="w-full text-left hover:bg-red-500/10 hover:text-red-600 font-semibold rounded-lg p-3"
                   >
