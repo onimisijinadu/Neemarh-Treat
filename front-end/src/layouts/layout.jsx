@@ -10,7 +10,7 @@ import { Footer } from './footer';
 import { NavBar } from './navbar';
 
 export const Layout = () => {
-  const { showLoginModal } = useAuth();
+  const { showLoginModal, user } = useAuth();
 
   const { isOpenNav, setisOpenNav } = useOverlay();
 
@@ -30,7 +30,7 @@ export const Layout = () => {
         <main className="flex-1 pt-20 sm:pt-24">
           <Outlet />
         </main>
-        <Footer />
+        {!user && <Footer />}
       </div>
     </>
   );

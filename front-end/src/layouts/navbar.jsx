@@ -23,6 +23,7 @@ import { Overlay } from '../component/overly';
 import {
   useAuth,
   useCart,
+  useOverlay,
 } from '../context/usecontext';
 import {
   MenuLinks,
@@ -32,6 +33,7 @@ import {
 export const NavBar = ({ isOpen, toogleBtn }) => {
   const location = useLocation();
   const navigate = useNavigate();
+  const { setisOpenNav } = useOverlay();
 
   const menuRef = useRef(null);
 
@@ -174,6 +176,7 @@ export const NavBar = ({ isOpen, toogleBtn }) => {
                       onClick={() => {
                         logOut();
                         toogleBtn();
+
                         navigate("/");
                       }}
                       className="w-full text-left hover:bg-red-500/10 hover:text-red-600 font-semibold rounded-lg p-3"
@@ -220,6 +223,7 @@ export const NavBar = ({ isOpen, toogleBtn }) => {
                     onClick={() => {
                       logOut();
                       toogleBtn();
+                      setisOpenNav(false);
                       navigate("/");
                     }}
                     className="w-full text-left hover:bg-red-500/10 hover:text-red-600 font-semibold rounded-lg p-3"

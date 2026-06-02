@@ -35,6 +35,7 @@ export const LoginModal = () => {
     password: "",
     confirmPassword: "",
     auth_method: "local",
+    role: "customer",
   });
 
   const handleToggle = () => {

@@ -263,6 +263,7 @@ export const AuthProvider = ({ children }) => {
       email: userData.email,
       name: userData.name,
       password: "", // Placeholder password for Google users
+      role: "customer",
       auth_method: "google",
       google_id: userData.sub,
     };

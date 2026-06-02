@@ -77,7 +77,7 @@ export const Setting = () => {
     <Form
       BtnText={`${loading ? "....." : "Update Password"}`}
       action={handleSave}
-      btnDiv={`flex justify-start items-left w-123`}
+      btnDiv={`flex justify-start items-left w-full sm:w-123`}
       btnClass={` text-center w-full bg-orange-400/90 text-lg font-semibold py-3.5 rounded-xl text-white/90 hover:bg-orange-400/70 cursor-pointer mb-3`}
       className={
         "flex flex-col w-full md:w-175 lg:w-225 gap-3 bg-gray-900 my-6 pt-7 px-7 rounded-xl text-2xl font-bold"

@@ -14,18 +14,11 @@ import { Home } from '../pages/home';
 import { Menu } from '../pages/menu';
 import { Orderdetails } from '../pages/order';
 import { MyAccount } from '../pages/userAccount/my_account';
+import { ProtectedRoutes } from './protectedRoutes';
 
 export const AppRouters = () => {
   return (
     <Routes>
-      {/* <Route
-        path="/home"
-        element={
-          <ProtectedRoutes allowedRole={"customer"}>
-            <Layout />
-          </ProtectedRoutes>
-        }
-      > */}
       <Route path="/" element={<Layout />}>
         <Route index={true} element={<Home />} />
         <Route path="/menu" element={<Menu />} />
@@ -33,17 +26,24 @@ export const AppRouters = () => {
         <Route path="/about" element={<AboutUs />} />
         <Route path="/menu/:id" element={<Orderdetails />} />
         <Route path="/cart" element={<CartDetails />} />
-        <Route path="/checkout" element={<CheckOut />} />
-        <Route path="/account" element={<MyAccount />} />
+        <Route
+          path="/checkout"
+          element={
+            <ProtectedRoutes allowedRole={"customer"}>
+              <CheckOut />{" "}
+            </ProtectedRoutes>
+          }
+        />
+        <Route
+          path="/account"
+          element={
+            <ProtectedRoutes allowedRole={"customer"}>
+              <MyAccount />{" "}
+            </ProtectedRoutes>
+          }
+        />
       </Route>
-      {/* <Route
-        path="/admin"
-        element={
-          <ProtectedRoutes allowedRole={"admin"}>
-            <Layout />
-          </ProtectedRoutes>
-        }
-      > */}
+
       <Route path="/admin" element={<Layout />}>
         <Route path="/admin" element={<AdminDashboard />} />
         <Route path="/admin/manage_meals" element={<ManageMeal />} />
