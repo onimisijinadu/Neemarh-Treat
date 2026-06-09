@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState } from "react";
 
 import {
   Calendar,
@@ -13,20 +13,15 @@ import {
   UtensilsCrossed,
   XCircle,
   XIcon,
-} from 'lucide-react';
-import { motion } from 'motion/react';
-import { useNavigate } from 'react-router';
-import { toast } from 'react-toastify';
+} from "lucide-react";
+import { motion } from "motion/react";
+import { useNavigate } from "react-router";
+import { toast } from "react-toastify";
 
-import { CsButton } from '../../component/button';
-import {
-  Form,
-  FormHeader,
-  FormInput,
-  MessageArea,
-} from '../../component/form';
-import { Overlay } from '../../component/overly';
-import { useCart } from '../../context/usecontext';
+import { CsButton } from "../../component/button";
+import { Form, FormHeader, FormInput, MessageArea } from "../../component/form";
+import { Overlay } from "../../component/overly";
+import { useCart } from "../../context/usecontext";
 
 export const AdminDashboard = () => {
   const { delivery, setDelivery, meals, addMeal } = useCart();
@@ -394,7 +389,7 @@ export const AdminDashboard = () => {
                   <div className="flex flex-col w-full">
                     <div className="flex justify-between gap-3 item-center">
                       <div className="flex flex-col text-left gap-2">
-                        <div className=" flex text-xl lg:text-2xl text-white/90 font-semibold">
+                        <div className=" flex text-sm sm:text-lg text-white/90 font-semibold">
                           Order <span className="font-light ml-1"> #</span>
                           {item.orderId}
                         </div>
@@ -406,15 +401,15 @@ export const AdminDashboard = () => {
                         </div>
                       </div>
                       <div
-                        className={`flex justify-center items-center gap-1 px-2.5 py-0.5 h-fit rounded-full ${item.status === "Pending" ? "bg-orange-400/20 text-orange-400/90" : item.status === "Completed" ? "bg-green-400/20 text-green-400" : "bg-red-400/20 text-red-400"}`}
+                        className={`flex justify-center items-center gap-1 px-2.5 py-0.5 h-fit rounded-full text-xs sm:text-sm ${item.status === "Pending" ? "bg-orange-400/20 text-orange-400/90" : item.status === "Completed" ? "bg-green-400/20 text-green-400" : "bg-red-400/20 text-red-400"}`}
                       >
                         <span>
                           {item.status === "Cancelled" ? (
-                            <XCircle className="w-5 h-5" />
+                            <XCircle className="w-3 h-3 sm:w-5 sm:h-5" />
                           ) : item.status === "Completed" ? (
-                            <CheckCircle className="w-5 h-5" />
+                            <CheckCircle className="w-3 h-3 sm:w-5 sm:h-5" />
                           ) : (
-                            <Clock className="w-5 h-5" />
+                            <Clock className="w-3 h-3 sm:w-5 sm:h-5" />
                           )}
                         </span>
                         <p>{item.status}</p>

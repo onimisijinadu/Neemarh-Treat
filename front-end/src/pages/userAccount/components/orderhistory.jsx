@@ -1,11 +1,8 @@
-import { useState } from 'react';
+import { useState } from "react";
 
-import {
-  ChevronLeftCircle,
-  ChevronRightCircle,
-} from 'lucide-react';
+import { ChevronLeftCircle, ChevronRightCircle } from "lucide-react";
 
-import { useCart } from '../../../context/usecontext';
+import { useCart } from "../../../context/usecontext";
 
 export const OrderHistory = () => {
   const { delivery } = useCart();
@@ -70,11 +67,11 @@ export const OrderHistory = () => {
           {orderHistory.map((order) => (
             <div
               key={order.orderId}
-              className="flex flex-col w-full text-base p-4 border-b border-b-gray-400/20 "
+              className="flex flex-col w-full text-base p-2 border-b border-b-gray-400/20 "
             >
               <div className="flex justify-between gap-2 item-center">
                 <div className="flex flex-col text-left leading-0">
-                  <div className=" flex text-sm sm:text-base lg:text-lg text-white font-bold">
+                  <div className=" flex text-left whitespace-nowrap text-sm sm:text-base lg:text-lg text-white font-bold">
                     Order <span className="font-bold ml-1"> #</span>
                     {order.orderId}
                   </div>
